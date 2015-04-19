@@ -1,0 +1,5 @@
+services:
+    nfq.demo.subscriber.rng_generated:
+        class: Nfq\DemoBundle\EventSubscriber\RngGeneratedSubscriber
+        tags:
+            - { name: kernel.event_subscriber }
