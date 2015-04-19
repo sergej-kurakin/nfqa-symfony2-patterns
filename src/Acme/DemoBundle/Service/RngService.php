@@ -17,6 +17,10 @@
 
 namespace Acme\DemoBundle\Service;
 
+use Acme\DemoBundle\AcmeDemoEvents;
+use Acme\DemoBundle\Event\RngGenerated;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
 /**
  * Class RngService
  *
@@ -26,10 +30,28 @@ class RngService implements RngInterface
 {
 
     /**
+     * @var EventDispatcherInterface
+     */
+    protected $eventDispatcher;
+
+    /**
+     * @param EventDispatcherInterface $eventDispatcher
+     */
+    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher)
+    {
+        $this->eventDispatcher = $eventDispatcher;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function rand($min, $max)
     {
-        return mt_rand($min, $max);
+        $rn = mt_rand($min, $max);
+
+        $event = new RngGenerated($rn);
+        $this->eventDispatcher->dispatch(AcmeDemoEvents::RNG_GENERATED, $event);
+
+        return $rn;
     }
 }

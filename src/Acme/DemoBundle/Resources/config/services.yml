@@ -20,6 +20,8 @@ services:
 
     acme.service.rng:
         class: %acme.service.rng.class%
+        calls:
+            - [setEventDispatcher, [@event_dispatcher]]
         lazy: true
 
     acme.service.trust_rng:
