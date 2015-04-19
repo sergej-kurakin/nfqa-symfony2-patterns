@@ -1,0 +1,28 @@
+parameters:
+    acme.service.rng.class: Acme\DemoBundle\Service\RngService
+    acme.service.trust_rng.class: Acme\DemoBundle\Service\TrustRngService
+
+services:
+    twig.extension.acme.demo:
+        class: Acme\DemoBundle\Twig\Extension\DemoExtension
+        public: false
+        tags:
+            - { name: twig.extension }
+        arguments:
+            - @twig.loader
+
+    acme.demo.listener:
+        class: Acme\DemoBundle\EventListener\ControllerListener
+        tags:
+            - { name: kernel.event_listener, event: kernel.controller, method: onKernelController }
+        arguments:
+            - @twig.extension.acme.demo
+
+    acme.service.rng:
+        class: %acme.service.rng.class%
+        lazy: true
+
+    acme.service.trust_rng:
+        class: %acme.service.trust_rng.class%
+        calls:
+            - [ setRng, [ @acme.service.rng ] ]
